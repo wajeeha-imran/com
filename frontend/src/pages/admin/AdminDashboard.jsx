@@ -6,13 +6,17 @@ import { useAuth } from "../../context/AuthContext";
 
 import "../../styles/admin.css";
 
+const IMAGE_URL =
+  (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(
+    "/api",
+    ""
+  );
+
 function AdminDashboard() {
   const { user } = useAuth();
-
   const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,26 +31,23 @@ function AdminDashboard() {
     }
 
     fetchProducts();
-  }, [user]);
+  }, [user, navigate]);
 
   const fetchProducts = async () => {
     try {
       const response = await api.get("/products");
-
-      setProducts(response.data.products);
+      setProducts(response.data.products || []);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const deleteProduct = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
-    );
-
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this product?")) {
+      return;
+    }
 
     try {
       await api.delete(`/products/${id}`);
@@ -70,59 +71,44 @@ function AdminDashboard() {
 
   return (
     <div className="admin-dashboard">
-
       <div className="admin-header">
-
         <h1>Admin Dashboard</h1>
 
         <Link to="/admin/add-product">
           <button>Add Product</button>
         </Link>
-
       </div>
 
       <table>
-
         <thead>
-
           <tr>
-
             <th>ID</th>
-
             <th>Image</th>
-
             <th>Name</th>
-
             <th>Price</th>
-
             <th>Stock</th>
-
             <th>Actions</th>
-
           </tr>
-
         </thead>
 
         <tbody>
-
           {products.map((product) => (
-
             <tr key={product.id}>
-
               <td>{product.id}</td>
 
               <td>
-
                 <img
                   src={
                     product.image
-                      ? `http://localhost:5000/uploads/${product.image}`
+                      ? `${IMAGE_URL}/uploads/${product.image}`
                       : "https://via.placeholder.com/60"
                   }
                   alt={product.name}
                   width="60"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/60";
+                  }}
                 />
-
               </td>
 
               <td>{product.name}</td>
@@ -132,34 +118,21 @@ function AdminDashboard() {
               <td>{product.stock}</td>
 
               <td>
-
-                <Link
-                  to={`/admin/edit-product/${product.id}`}
-                >
-                  <button className="edit-btn">
-                    Edit
-                  </button>
+                <Link to={`/admin/edit-product/${product.id}`}>
+                  <button className="edit-btn">Edit</button>
                 </Link>
 
                 <button
                   className="delete-btn"
-                  onClick={() =>
-                    deleteProduct(product.id)
-                  }
+                  onClick={() => deleteProduct(product.id)}
                 >
                   Delete
                 </button>
-
               </td>
-
             </tr>
-
           ))}
-
         </tbody>
-
       </table>
-
     </div>
   );
 }
