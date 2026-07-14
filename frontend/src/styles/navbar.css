@@ -1,0 +1,48 @@
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 50px;
+    background:#222;
+}
+
+.logo a{
+    color:white;
+    text-decoration:none;
+}
+
+.nav-links{
+    display:flex;
+    gap:20px;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+}
+
+.nav-links a.active{
+    color:#4CAF50;
+    font-weight:bold;
+}
+
+.auth-section{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.auth-section span{
+    color:white;
+}
+
+button{
+    padding:8px 18px;
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+}
+
+button:hover{
+    opacity:.9;
+}
