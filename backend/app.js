@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://com-ztf4.vercel.app",
+      "https://com-md3k.vercel.app",
     ],
     credentials: true,
   })
